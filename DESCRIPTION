@@ -1,0 +1,20 @@
+Package: rPCor
+Title: A fast and robust variable screening method for detecting genome-wide epigenetic regulators of gene expression.
+Version: 1.0
+Date: 2021-11-23
+Description: The package implements rPCor for variable screening on data with both high-dimensional predictor and response.
+License: GPL (>= 2)
+Encoding: UTF-8
+Authors@R: c(
+    person("Hongjie", "Ke", email = "kehj@terpmail.umd.edu", role = c("aut", "cre")),
+    person("Tianzhou", "Ma", role = "aut"))
+Author: Hongjie Ke [aut, cre],
+        Tianzhou Ma [aut].
+Maintainer: Hongjie Ke <kehj@terpmail.umd.edu>
+Depends: R (>= 3.2.4)
+Imports: FarmTest, BCSub
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.0
+NeedsCompilation: yes
+Packaged: 2021-11-24 3:41:00 UTC; kehongjie
+Date/Publication: 2021-11-24 3:41:00 UTC
