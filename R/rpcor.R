@@ -16,9 +16,9 @@
 ##' be specified if \code{block=TRUE}.
 ##' @param alpha: The alpha threshold. Default is \code{1e-5}.
 ##' @param xcor.thres: The threshold for between-predictor (robust) correlation.
-##' Default is 0.3.
+##' Default is 0.5.
 ##' @param ycor.thres: The threshold for between-response (robust) correlation. Only
-##' need to be specified if \code{block=FALSE}. Default is 0.3.
+##' need to be specified if \code{block=FALSE}. Default is 0.5.
 ##' @param max.reach: The maximum order for partial corrlation. Default is 5.
 ##' @param d: The maximum number of neighbors to be considered as candidates for
 ##' conditioning set. That is, for predictors \eqn{X_i}, only top d predictors that
@@ -50,7 +50,7 @@
 
 rpcor <- function(X, Y, block=FALSE, group.index.Y=NULL,
                   alpha=1e-5,
-                  xcor.thres=0.8, ycor.thres=0.8, max.reach=5, d=20,
+                  xcor.thres=0.5, ycor.thres=0.5, max.reach=5, d=20,
                   ht=FALSE, c=0.5, verbose=TRUE) {
   n <- nrow(X)
   p <- ncol(X)
