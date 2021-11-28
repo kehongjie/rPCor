@@ -10,8 +10,8 @@ rpcor(
   block = FALSE,
   group.index.Y = NULL,
   alpha = 1e-05,
-  xcor.thres = 0.8,
-  ycor.thres = 0.8,
+  xcor.thres = 0.5,
+  ycor.thres = 0.5,
   max.reach = 5,
   d = 20,
   ht = FALSE,
@@ -35,10 +35,10 @@ be specified if \code{block=TRUE}.}
 \item{alpha:}{The alpha threshold. Default is \code{1e-5}.}
 
 \item{xcor.thres:}{The threshold for between-predictor (robust) correlation.
-Default is 0.3.}
+Default is 0.5.}
 
 \item{ycor.thres:}{The threshold for between-response (robust) correlation. Only
-need to be specified if \code{block=FALSE}. Default is 0.3.}
+need to be specified if \code{block=FALSE}. Default is 0.5.}
 
 \item{max.reach:}{The maximum order for partial corrlation. Default is 5.}
 
@@ -70,8 +70,69 @@ on high-dimensional predcitor and high-dimensional response.
 }
 \examples{
 \dontrun{
-set.seed(1234)
+set.seed(123)
 
+## FUNCTION: use fisher's transformation to get the p-value for correlation
+fisher.ztrans.cor <- function(r,n) { ## r is correlation
+  z  <-  0.5*(log(1+r)-log(1-r))
+  pvalue <- pnorm(-abs(z), mean=0, sd=(1/sqrt(n-3)))*2
+  return(pvalue)
+}
+
+## FUNCTION: threshold the p-value matrix to get the indicator
+threshold.pvalue <- function(pvalue, threshold=1e-5) {
+  indicator <- matrix(0,nrow(pvalue),ncol(pvalue))
+  indicator[(abs(pvalue) < threshold)] <- 1
+  return(indicator)
+}
+
+n <- 200 ## sample szie (1000)
+p <- 1000 ## number of predictors
+q <- 500 ## number of responses
+alpha <- 1e-3 ## alpha threshold
+
+## simulate data
+Sigma_X <- toeplitz(0.8^c(0:(p-1)))
+Sigma_Y <- toeplitz(0.8^c(0:(q-1)))
+X <- mvrnormArma(n, rep(0,p), Sigma_X)
+beta_matrix <- matrix(0, p, q)
+beta_matrix[c(1, 2, 3), 1] <- 1
+beta_matrix[c(4, 5, 6), 2] <- 1
+beta_matrix[c(7, 8, 9), 3] <- 1
+Y <- matrix(NA, n, q)
+for (i in 1:n) {
+  mean_Y <- X[i,] \%*\% beta_matrix
+  Y[i,] <- mvrnormArma(1, mean_Y, Sigma_Y)
+}
+signal_pos <- which(beta_matrix != 0)
+noise_pos <- which(beta_matrix == 0)
+X_std <- scale(X)
+Y_cen <- scale(Y, scale = F)
+Y_std <- scale(Y)
+
+## run SIS (marginal screening)
+sis_start <- Sys.time()
+sis_pvalue <- matrix(NA, p, q)
+for (j in 1:q) {
+  cor_y <- as.vector(cor(X_std, Y[,j]))
+  pvalue_y <- fisher.ztrans.cor(cor_y, n)
+  sis_pvalue[,j] <- pvalue_y
+}
+sis_ind <- threshold.pvalue(sis_pvalue, threshold=alpha)
+sis_end <- Sys.time()
+print("SIS finishes in:")
+print(sis_end - sis_start)
+print(paste("Left with ", sum(sis_ind!=0), " pairs and ", 
+            sum(sis_ind[signal_pos]), " of them are True Positives", sep=""))
+
+## run rPCor-corr 
+pc_start <- Sys.time()
+pc_ind <- rpcor(X=X_std, Y=Y_std, alpha=alpha, xcor.thres=0.5, ycor.thres=0.5)
+pc_end <- Sys.time()
+print("PC-thres finishes in")
+print(pc_end-pc_start)
+print(paste("Left with ", sum(pc_ind!=0), " pairs and ", 
+            sum(pc_ind[signal_pos]), " of them are True Positives", sep=""))
 
 }
 }
