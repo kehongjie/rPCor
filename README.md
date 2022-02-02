@@ -1,6 +1,6 @@
 # rPCor
 
-This is the R package for implementing rPCor, a fast and robust variable screening method for detecting genome-wide epigenetic regulators of gene expression. rPCor can reduce the dimension of both predictor (epigenetic regulators) and response (genes), and remove most epigenetic-gene pairs while keeping the true relevant pairs in the model after screening. More details can be found in our paper.
+This is the R package for implementing rPCor, a high-dimension to high-dimension variable screening method for detecting genome-wide epigenetic regulators of gene expression. rPCor can reduce the dimension of both predictor (epigenetic regulators) and response (genes), and remove most epigenetic-gene pairs while keeping the true relevant pairs in the model after screening. More details can be found in our paper.
 
 
 # Installation
