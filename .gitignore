@@ -39,3 +39,5 @@ vignettes/*.pdf
 .Renviron
 
 rPcor.Rproj
+
+.DS_Store
